@@ -1,0 +1,67 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="row mt-5">
+        <div class="col-4"></div>
+        <div class="col-4 text-center">
+             <h3>Create Post</h3>
+        </div>
+        <div class="col-4"></div>
+    </div>
+    <form id="post-form">
+        <div class="row">
+            {% csrf_token %}
+            <div class="col-4"></div>
+            <div class="col-4">
+                 {% for field in form %}
+            <div class="form-group">
+                <label class="col-12">{{ field.label }}</label>
+                {{ field }}
+            </div>
+            {% endfor %}
+           <div class="text-center">
+                <input type="submit" class="btn btn-success" value="Create Post" />
+           </div>
+            </div>
+            <div class="col-4"></div>
+        </div>
+    </form>
+</div>
+
+
+{% endblock content %}
+
+{% block javascript %}
+<script>
+    /*
+        On submiting the form, send the POST ajax
+        request to server and after successfull submission
+        display the object.
+    */
+    $("#post-form").submit(function (e) {
+        // preventing from page reload and default actions
+        e.preventDefault();
+        // serialize the data for sending the form data.
+        var serializedData = $(this).serialize();
+        // make POST ajax call
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'post_Post' %}",
+            data: serializedData,
+            success: function (response) {
+                // on successfull creating object
+                // 1. clear the form.
+                $("#post-form").trigger('reset');
+
+
+            },
+            error: function (response) {
+                // alert the error if any error occured
+                alert(response["responseJSON"]["error"]);
+            }
+        })
+    })
+</script>
+{% endblock javascript %}
